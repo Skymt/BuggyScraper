@@ -45,6 +45,9 @@ namespace Scraper
         }
         public void ProcessAll(int threadCount)
         {
+            if (threadCount < 1) throw new ArgumentOutOfRangeException(nameof(threadCount));
+            else threadCount = 1;
+
             var threads = Enumerable.Range(1, threadCount).Select(workerThread);
             async Task workerThread(int threadId)
             {

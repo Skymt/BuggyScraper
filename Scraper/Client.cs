@@ -13,11 +13,10 @@
     public abstract class BaseClient : IClient
     {
         static readonly string[] _textExtensions = new[] { ".html", ".css", ".js" };
-        static readonly string[] _fileExtension = new[] { ".jpg", ".ico", ".eot", ".woff", ".ttf", ".svg" };
+        static readonly string[] _fileExtension = new[] { ".jpeg", ".ico", ".eot", ".woff", ".ttf", ".svg" };
 
         readonly protected string _destination;
         public BaseClient(string destination) => _destination = destination;
-        static protected readonly string fontAwesomeFix = "%3Fv=3.2.1";
 
         public string ToAbsolutePath(string basePath, string relativePath)
         {
@@ -39,10 +38,10 @@
             if (!candidateUrl.Contains('.')) return false;
             if (candidateUrl.EndsWith('.')) return false;
 
-            if (candidateUrl.EndsWith(fontAwesomeFix)) return true;
-
             var extension = candidateUrl[candidateUrl.LastIndexOf('.')..];
-            return _fileExtension.Contains(extension) || _textExtensions.Contains(extension);
+            //if(!_fileExtension.Contains(extension)) return false;
+            //if(!_textExtensions.Contains(extension)) return false;
+            return true;
         }
         public virtual bool CanParse(string url)
         {
@@ -51,7 +50,7 @@
         }
         public virtual async Task SaveFile(string url, byte[] data)
         {
-            FileInfo localFile = new(Path.Combine(_destination, url.Replace(fontAwesomeFix, string.Empty)));
+            FileInfo localFile = new(Path.Combine(_destination, url));
             localFile.Directory?.Create();
             await File.WriteAllBytesAsync(localFile.FullName, data);
         }
@@ -59,7 +58,7 @@
         {
             FileInfo localFile = new(Path.Combine(_destination, url));
             localFile.Directory?.Create();
-            await File.WriteAllTextAsync(localFile.FullName, content.Replace(fontAwesomeFix, string.Empty));
+            await File.WriteAllTextAsync(localFile.FullName, content);
         }
         public abstract Task<byte[]> DownloadFile(string url);
         public abstract Task<string> DownloadText(string url);
@@ -78,7 +77,7 @@
         public CachedBooksToScrapeClient(string destination) : base(destination) { }
         public override async Task<byte[]> DownloadFile(string url)
         {
-            var localFile = Path.Combine(_destination, url.Replace(fontAwesomeFix, string.Empty));
+            var localFile = Path.Combine(_destination, url);
             if (File.Exists(localFile))
                 return await File.ReadAllBytesAsync(localFile);
             return await _client.GetByteArrayAsync(url);
