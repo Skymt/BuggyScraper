@@ -19,7 +19,6 @@
         public BaseClient(string destination) => _destination = destination;
         static protected readonly string fontAwesomeFix = "%3Fv=3.2.1";
 
-
         public string ToAbsolutePath(string basePath, string relativePath)
         {
             if (relativePath.StartsWith('/')) return relativePath;
@@ -66,14 +65,14 @@
         public abstract Task<string> DownloadText(string url);
     }
 
-    internal class BooksToScrapeClient : BaseClient
+    internal sealed class BooksToScrapeClient : BaseClient
     {
         public BooksToScrapeClient(string destination) : base(destination) { }
         static readonly HttpClient _client = new() { BaseAddress = new("http://books.toscrape.com/") };
         public override async Task<byte[]> DownloadFile(string url) => await _client.GetByteArrayAsync(url);
         public override async Task<string> DownloadText(string url) => await _client.GetStringAsync(url);
     }
-    internal class CachedBooksToScrapeClient : BaseClient
+    internal sealed class CachedBooksToScrapeClient : BaseClient
     {
         static readonly HttpClient _client = new() { BaseAddress = new("http://books.toscrape.com/") };
         public CachedBooksToScrapeClient(string destination) : base(destination) { }

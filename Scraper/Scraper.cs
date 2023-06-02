@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
 
 namespace Scraper
 {
@@ -25,7 +24,7 @@ namespace Scraper
         }
         public async Task Process(string url)
         {
-            if (_client!.CanParse(url))
+            if (_client.CanParse(url))
             {
                 var content = await _client.DownloadText(url);
                 var quotedStrings = _parser.FindQuotedStrings(content);
